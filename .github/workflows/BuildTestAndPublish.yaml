@@ -1,0 +1,73 @@
+name: Build, Test, and Publish
+
+on:
+    push:
+        branches:
+        - master  # Trigger on pushes to the master branch
+
+env:  
+    SONARQUBE_PROJECT_NAME: NS.Shared.CacheProvider_master
+
+jobs:
+    BuildTestAndPublish:
+        runs-on: ubuntu-latest  # windows-latest or ubuntu-latest, depending on your preference
+    
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v3
+
+            - name: Setup .NET Core
+              uses: actions/setup-dotnet@v1
+              with:
+                dotnet-version: '8.0.x'  # specify your .NET Core version
+
+            - name: Install SonarQube scanner
+              if: ${{ vars.V_SKIP_SONARQUBE_SCAN != 'true' }}
+              run: npm install -g sonarqube-scanner
+            - name: Print environments
+              if: ${{ vars.V_SKIP_PRINT_ENVIRONMENTS != 'true' }}
+              run: |
+                echo '************************ Environments ************************'
+                printenv
+                echo '************************** Versions **************************'
+                echo 'nodejs:'
+                node --version
+                echo 'dotnet:'
+                dotnet --version
+                echo 'docker:'
+                docker version
+                echo '**************************************************************'
+
+            - name: Add private NuGet source              
+              run: dotnet nuget add source ${{ vars.V_FEED_SOURCE }} --name NashefSystems --username ${{ vars.V_FEED_USERNAME }} --password ${{ secrets.S_FEED_TOKEN }} --store-password-in-clear-text
+          
+            - name: Restore dependencies
+              run: dotnet restore
+      
+            - name: Build
+              run: dotnet build --configuration Release --no-restore
+
+            - name: Test
+              run: dotnet test --no-restore --verbosity normal
+
+            - name: Run SonarQube scan   
+              if: ${{ vars.V_SKIP_SONARQUBE_SCAN != 'true' }}
+              run: |
+                sonar-scanner -X \
+                -Dsonar.projectKey=${{ env.SONARQUBE_PROJECT_NAME }} \
+                -Dsonar.sources=. \
+                -Dsonar.host.url=${{ vars.V_SONARQUBE_URL }} \
+                -Dsonar.token=${{ secrets.S_SONARQUBE_TOKEN }}
+
+            - name: Archive SonarQube results
+              if: ${{ vars.V_SKIP_SONARQUBE_SCAN != 'true' }}
+              uses: actions/upload-artifact@v2
+              with:
+                name: sonar-report
+                path: .scannerwork/report-task.txt
+        
+            - name: Pack
+              run: dotnet pack --configuration Release --no-build --output nupkgs
+
+            - name: Publish NuGet Package
+              run: dotnet nuget push "**/*.nupkg" --source ${{ vars.V_FEED_SOURCE }} --api-key ${{ secrets.S_FEED_TOKEN }} --skip-duplicate       

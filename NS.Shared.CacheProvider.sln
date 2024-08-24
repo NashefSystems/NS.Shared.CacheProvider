@@ -1,0 +1,36 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.11.35208.52
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NS.Shared.CacheProvider", "NS.Shared.CacheProvider\NS.Shared.CacheProvider.csproj", "{A23DBC09-B82B-42EF-BE24-1F909D0B51C1}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NS.Shared.CacheProvider.Tests", "NS.Shared.CacheProvider.Tests\NS.Shared.CacheProvider.Tests.csproj", "{AF7270F1-14C2-43BE-B950-80F5F28117F4}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution items", "Solution items", "{9557262C-4621-4D96-8756-E81BAADDD2D3}"
+	ProjectSection(SolutionItems) = preProject
+		.github\workflows\BuildTestAndPublish.yaml = .github\workflows\BuildTestAndPublish.yaml
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{A23DBC09-B82B-42EF-BE24-1F909D0B51C1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A23DBC09-B82B-42EF-BE24-1F909D0B51C1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A23DBC09-B82B-42EF-BE24-1F909D0B51C1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A23DBC09-B82B-42EF-BE24-1F909D0B51C1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AF7270F1-14C2-43BE-B950-80F5F28117F4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AF7270F1-14C2-43BE-B950-80F5F28117F4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AF7270F1-14C2-43BE-B950-80F5F28117F4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AF7270F1-14C2-43BE-B950-80F5F28117F4}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {037A1BD8-FFDC-46A4-AB1A-0C87DA4BDAC2}
+	EndGlobalSection
+EndGlobal
