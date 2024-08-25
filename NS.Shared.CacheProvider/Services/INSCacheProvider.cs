@@ -7,8 +7,8 @@ namespace NS.Shared.CacheProvider.Services
     {
         Task<List<string>> GetKeysAsync();
         Task<T?> GetAsync<T>(string key);
-        Task<T?> GetDeleteAsync<T>(string key);
-        Task<bool> SetOrUpdateAsync<T>(string key, T value, TimeSpan? expiryTime = null);
+        Task DeleteAsync<T>(string key);
+        Task SetOrUpdateAsync<T>(string key, T value, TimeSpan? expiryTime = null);
     }
 
     internal class NSCacheProvider : INSCacheProvider
@@ -16,37 +16,41 @@ namespace NS.Shared.CacheProvider.Services
         private readonly IConnectionMultiplexer _redis;
         private readonly IDatabase _database;
 
+        private const string HASH_CREATE_AT_KEY = "CreateAt";
+        private const string HASH_MACHINE_NAME_KEY = "MachineName";
+        private const string HASH_DATA_KEY = "Data";
+
         public NSCacheProvider(IConnectionMultiplexer connectionMultiplexer)
         {
             _redis = connectionMultiplexer;
             _database = _redis.GetDatabase();
         }
 
-        public async Task<bool> SetOrUpdateAsync<T>(string key, T value, TimeSpan? expiryTime = null)
+        public async Task SetOrUpdateAsync<T>(string key, T value, TimeSpan? expiryTime = null)
         {
             if (value == null)
             {
-                await GetDeleteAsync<T>(key);
-                return true;
+                await DeleteAsync<T>(key);
+                return;
             }
-
             var json = JsonConvert.SerializeObject(value, Formatting.Indented);
-            return await _database.StringSetAsync(key, json, expiryTime, When.Always);
+
+            await _database.HashSetAsync(key, HASH_CREATE_AT_KEY, DateTimeOffset.Now.ToString(), When.Always);
+            await _database.HashSetAsync(key, HASH_MACHINE_NAME_KEY, Environment.MachineName, When.Always);
+            await _database.HashSetAsync(key, HASH_DATA_KEY, json, When.Always);
+            await _database.KeyExpireAsync(key, expiryTime);
         }
 
-        public async Task<T?> GetDeleteAsync<T>(string key)
+        public async Task DeleteAsync<T>(string key)
         {
-            var redisValue = await _database.StringGetDeleteAsync(key);
-            if (!redisValue.HasValue)
-            {
-                return default;
-            }
-            return JsonConvert.DeserializeObject<T>(redisValue.ToString());
+            await _database.HashDeleteAsync(key, HASH_DATA_KEY);
+            await _database.HashDeleteAsync(key, HASH_MACHINE_NAME_KEY);
+            await _database.HashDeleteAsync(key, HASH_CREATE_AT_KEY);
         }
 
         public async Task<T?> GetAsync<T>(string key)
         {
-            var redisValue = await _database.StringGetAsync(key);
+            var redisValue = await _database.HashGetAsync(key, HASH_DATA_KEY);
             if (!redisValue.HasValue)
             {
                 return default;

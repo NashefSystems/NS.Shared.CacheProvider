@@ -31,8 +31,14 @@ namespace NS.Shared.CacheProvider.Tests
         [Test, Order(1)]
         public async Task SetValueAsync()
         {
-            var res = await _cacheProvider.SetOrUpdateAsync($"{KEY_PREFIX}:list", _list);
-            Assert.That(res, Is.True);
+            try
+            {
+                await _cacheProvider.SetOrUpdateAsync($"{KEY_PREFIX}:list", _list, TimeSpan.FromMinutes(1));
+            }
+            catch (Exception ex)
+            {
+                Assert.Fail(ex.Message);
+            }
         }
 
         [Test, Order(2)]
@@ -46,8 +52,28 @@ namespace NS.Shared.CacheProvider.Tests
         [Test, Order(1)]
         public async Task SetNullValueAsync()
         {
-            var res = await _cacheProvider.SetOrUpdateAsync<object>($"{KEY_PREFIX}:null_value", null);
-            Assert.That(res, Is.True);
+            try
+            {
+                await _cacheProvider.SetOrUpdateAsync<object>($"{KEY_PREFIX}:null_value", null);
+            }
+            catch (Exception ex)
+            {
+                Assert.Fail(ex.Message);
+            }
+        }
+
+        [Test, Order(1)]
+        public async Task SetValueWithTTLAsync()
+        {
+            try
+            {
+                var rnd = new Random();
+                await _cacheProvider.SetOrUpdateAsync<object>($"{KEY_PREFIX}:ttl_value", rnd.Next(10000), TimeSpan.FromSeconds(30));
+            }
+            catch (Exception ex)
+            {
+                Assert.Fail(ex.Message);
+            }
         }
 
         [Test, Order(2)]
