@@ -1,0 +1,12 @@
+name: Build, Publish NuGet, and Create Release
+ 
+on:
+    workflow_dispatch:
+    push:
+        branches:
+        - develop
+        - master
+jobs:
+    BuildTestAndPublish:
+        uses: NashefSystems/NS.DevOps.Files/.github/workflows/Nuget_CI-CD.yml@master
+        secrets: inherit
