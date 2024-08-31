@@ -6,6 +6,11 @@ on:
         branches:
         - develop
         - master
+        
+concurrency:
+    group: "${{ github.event.repository.name }}_group"
+    cancel-in-progress: false
+
 jobs:
     BuildTestAndPublish:
         uses: NashefSystems/NS.DevOps.Files/.github/workflows/Nuget_CI-CD.yml@master
