@@ -9,7 +9,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NS.Shared.CacheProvider.Tes
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution items", "Solution items", "{9557262C-4621-4D96-8756-E81BAADDD2D3}"
 	ProjectSection(SolutionItems) = preProject
-		.github\workflows\BuildTestAndPublish.yaml = .github\workflows\BuildTestAndPublish.yaml
+		README.md = README.md
+		.github\workflows\workflow.yml = .github\workflows\workflow.yml
 	EndProjectSection
 EndProject
 Global

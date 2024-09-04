@@ -9,6 +9,8 @@
 		<Version>1.0.0</Version>
 		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
 		<GenerateDocumentationFile>true</GenerateDocumentationFile>
+		<RepositoryUrl>https://github.com/NashefSystems/NS.Shared.CacheProvider</RepositoryUrl>
+		<PackageProjectUrl>https://github.com/NashefSystems/NS.Shared.CacheProvider</PackageProjectUrl>
 	</PropertyGroup>
 
 	<ItemGroup>

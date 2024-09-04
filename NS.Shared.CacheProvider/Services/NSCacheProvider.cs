@@ -1,16 +1,9 @@
 ﻿using Newtonsoft.Json;
+using NS.Shared.CacheProvider.Interfaces;
 using StackExchange.Redis;
 
 namespace NS.Shared.CacheProvider.Services
 {
-    public interface INSCacheProvider
-    {
-        Task<List<string>> GetKeysAsync();
-        Task<T?> GetAsync<T>(string key);
-        Task DeleteAsync<T>(string key);
-        Task SetOrUpdateAsync<T>(string key, T value, TimeSpan? expiryTime = null);
-    }
-
     internal class NSCacheProvider : INSCacheProvider
     {
         private readonly IConnectionMultiplexer _redis;
