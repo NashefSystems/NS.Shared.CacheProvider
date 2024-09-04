@@ -10,6 +10,7 @@ namespace NS.Shared.CacheProvider.Services
         private readonly IDatabase _database;
 
         private const string HASH_CREATE_AT_KEY = "CreateAt";
+        private const string HASH_EXPIRY_AT_KEY = "ExpiryAt";
         private const string HASH_MACHINE_NAME_KEY = "MachineName";
         private const string HASH_DATA_KEY = "Data";
 
@@ -26,12 +27,17 @@ namespace NS.Shared.CacheProvider.Services
                 await DeleteAsync<T>(key);
                 return;
             }
-            var json = JsonConvert.SerializeObject(value, Formatting.Indented);
 
-            await _database.HashSetAsync(key, HASH_CREATE_AT_KEY, DateTimeOffset.Now.ToString(), When.Always);
+            var createAt = DateTimeOffset.Now;
+            var json = JsonConvert.SerializeObject(value, Formatting.Indented);
+            await _database.HashSetAsync(key, HASH_CREATE_AT_KEY, createAt.ToString(), When.Always);
             await _database.HashSetAsync(key, HASH_MACHINE_NAME_KEY, Environment.MachineName, When.Always);
             await _database.HashSetAsync(key, HASH_DATA_KEY, json, When.Always);
-            await _database.KeyExpireAsync(key, expiryTime);
+            if (expiryTime != null)
+            {
+                await _database.HashSetAsync(key, HASH_EXPIRY_AT_KEY, createAt.Add(expiryTime.Value).ToString(), When.Always);
+                await _database.KeyExpireAsync(key, expiryTime.Value);
+            }
         }
 
         public async Task DeleteAsync<T>(string key)
