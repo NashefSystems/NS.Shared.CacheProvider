@@ -1,12 +1,12 @@
 using Microsoft.Extensions.DependencyInjection;
-using NS.Shared.CacheProvider.Services;
+using NS.Shared.CacheProvider.Interfaces;
 
 namespace NS.Shared.CacheProvider.Tests
 {
-    public class CacheProviderTests : TestFixture
+    public class CacheProviderTests : TestBase
     {
-        private const string KEY_PREFIX = "Tests:NS_Shared_CacheProvider:CacheProviderTests";
         private INSCacheProvider _cacheProvider;
+        private const string KEY_PREFIX = "Tests:NS_Shared_CacheProvider:CacheProviderTests";
         private readonly List<string> _list = ["NashefSystems", "CacheProvider", "Test"];
 
         [SetUp]
