@@ -2,14 +2,15 @@
 using NS.Shared.CacheProvider.Extensions;
 using NS.Shared.CacheProvider.Interfaces;
 using System;
+using System.Reflection;
 
 namespace NS.Shared.CacheProvider.Tests
 {
     [SetUpFixture]
     public class TestSetup
     {
-        private static Guid _runId = Guid.NewGuid();
-        private static DateTimeOffset _startAt = DateTimeOffset.Now;
+        private readonly static Guid _runId = Guid.NewGuid();
+        private readonly static DateTimeOffset _startAt = DateTimeOffset.Now;
         public static ServiceProvider? ServiceProvider { get; private set; }
 
         [OneTimeSetUp]
@@ -36,8 +37,9 @@ namespace NS.Shared.CacheProvider.Tests
             ServiceProvider = null;
         }
 
-        private async Task AddRunInfoCache()
+        private static async Task AddRunInfoCache()
         {
+            var projectName = Assembly.GetExecutingAssembly().GetName().Name;
             var finishAt = DateTimeOffset.Now;
             var runInfo = new
             {
@@ -47,7 +49,7 @@ namespace NS.Shared.CacheProvider.Tests
                 Duration = finishAt - _startAt,
             };
             var cache = ServiceProvider.GetRequiredService<INSCacheProvider>();
-            var key = $"Tests:Runs:NS.Shared.CacheProvider.Tests:{_startAt:yyyy-MM-dd}:{_runId}";
+            var key = $"Tests:Runs:{projectName}:{_startAt:yyyy-MM-dd}:{_runId}";
             await cache.SetOrUpdateAsync(key, runInfo);
         }
     }
