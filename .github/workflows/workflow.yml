@@ -1,17 +1,62 @@
 name: Build, Publish NuGet, and Create Release
  
 on:
-    workflow_dispatch:
-    push:
-        branches:
-        - develop
-        - master
+  repository_dispatch:
+    types: [API]  # This should match the event type you'll use in the API call
+
+  workflow_dispatch:
+
+  push:
+    branches:
+      - master
+      - develop
         
 concurrency:
     group: "${{ github.event.repository.name }}_group"
     cancel-in-progress: false
 
 jobs:
-    BuildTestAndPublish:
+    CheckBranch:
+      runs-on: ubuntu-latest
+      steps:
+        - name: Print event variables
+          run: |
+            echo "Event name: '${{ github.event_name }}'"
+            echo "Reference name (branch or tag): '${{ github.ref_name }}'"
+            echo "Client payload branch: '${{ github.event.client_payload.branch }}'"
+
+        - name: Check branch and handle warning
+          run: |
+            branch="${{ github.event.client_payload.branch }}"            
+            if [[ -z "${branch}" ]]; then
+              branch="${{ github.ref_name }}"
+            fi
+
+            if [[ "${branch}" != "master" && "${branch}" != "develop" ]]; then
+              echo "::error::Error: Branch '${branch}' is not 'master' or 'develop'."
+              exit 1
+            else
+              echo "Branch is allowed: ${branch}"
+            fi
+
+    BuildTestAndPublish_develop:
+        needs: CheckBranch
+        if: |
+          (github.event_name == 'push' && github.ref_name == 'develop') ||
+          (github.event_name == 'workflow_dispatch' && github.ref_name == 'develop') ||
+          (github.event_name == 'repository_dispatch' && github.event.client_payload.branch == 'develop')
         uses: NashefSystems/NS.DevOps.Files/.github/workflows/Nuget_CI-CD.yml@master
+        with:
+          BRANCH: "develop"
+        secrets: inherit
+        
+    BuildTestAndPublish_master:
+        needs: CheckBranch
+        if: |
+          (github.event_name == 'push' && github.ref_name == 'master') ||
+          (github.event_name == 'workflow_dispatch' && github.ref_name == 'master') ||
+          (github.event_name == 'repository_dispatch' && github.event.client_payload.branch == 'master')
+        uses: NashefSystems/NS.DevOps.Files/.github/workflows/Nuget_CI-CD.yml@master
+        with:
+          BRANCH: "master"
         secrets: inherit
