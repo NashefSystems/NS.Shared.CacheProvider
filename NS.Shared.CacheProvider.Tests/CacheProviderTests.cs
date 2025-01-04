@@ -82,5 +82,13 @@ namespace NS.Shared.CacheProvider.Tests
             var res = await _cacheProvider.GetAsync<object>($"{KEY_PREFIX}:null_value");
             Assert.That(res, Is.Null);
         }
+
+        [Test, Order(1)]
+        public async Task GetNotExistsKeyWithDefaultValue()
+        {
+            var defaultValue = 5588;
+            var res = await _cacheProvider.GetAsync<int>($"{KEY_PREFIX}:default_value", defaultValue);
+            Assert.That(res, Is.EqualTo(defaultValue));
+        }
     }
 }

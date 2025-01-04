@@ -9,8 +9,8 @@ namespace NS.Shared.CacheProvider.Interfaces
     public interface INSCacheProvider
     {
         Task<List<string>> GetKeysAsync();
-        Task<T?> GetAsync<T>(string key);
-        Task DeleteAsync<T>(string key);
+        Task<T?> GetAsync<T>(string key, T defaultValue = default);
         Task SetOrUpdateAsync<T>(string key, T value, TimeSpan? expiryTime = null);
+        Task DeleteAsync(string key);
     }
 }

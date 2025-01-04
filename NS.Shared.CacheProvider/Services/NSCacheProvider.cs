@@ -20,11 +20,31 @@ namespace NS.Shared.CacheProvider.Services
             _database = _redis.GetDatabase();
         }
 
+        public Task<List<string>> GetKeysAsync()
+        {
+            var server = _redis.GetServer(Consts.REDIS_HOST, Consts.REDIS_PORT);
+            var res = server?
+                .Keys(database: _database.Database)
+                .Select(x => x.ToString())
+                .ToList();
+            return Task.FromResult(res ?? []);
+        }
+
+        public async Task<T?> GetAsync<T>(string key, T defaultValue = default)
+        {
+            var redisValue = await _database.HashGetAsync(key, HASH_DATA_KEY);
+            if (!redisValue.HasValue)
+            {
+                return defaultValue;
+            }
+            return JsonConvert.DeserializeObject<T>(redisValue.ToString());
+        }
+
         public async Task SetOrUpdateAsync<T>(string key, T value, TimeSpan? expiryTime = null)
         {
             if (value == null)
             {
-                await DeleteAsync<T>(key);
+                await DeleteAsync(key);
                 return;
             }
 
@@ -40,31 +60,11 @@ namespace NS.Shared.CacheProvider.Services
             }
         }
 
-        public async Task DeleteAsync<T>(string key)
+        public async Task DeleteAsync(string key)
         {
             await _database.HashDeleteAsync(key, HASH_DATA_KEY);
             await _database.HashDeleteAsync(key, HASH_MACHINE_NAME_KEY);
             await _database.HashDeleteAsync(key, HASH_CREATE_AT_KEY);
-        }
-
-        public async Task<T?> GetAsync<T>(string key)
-        {
-            var redisValue = await _database.HashGetAsync(key, HASH_DATA_KEY);
-            if (!redisValue.HasValue)
-            {
-                return default;
-            }
-            return JsonConvert.DeserializeObject<T>(redisValue.ToString());
-        }
-
-        public Task<List<string>> GetKeysAsync()
-        {
-            var server = _redis.GetServer(Consts.REDIS_HOST, Consts.REDIS_PORT);
-            var res = server?
-                .Keys(database: _database.Database)
-                .Select(x => x.ToString())
-                .ToList();
-            return Task.FromResult(res ?? []);
         }
     }
 }
