@@ -24,7 +24,7 @@ namespace NS.Shared.CacheProvider.Tests
         {
             Console.WriteLine("> GetServiceProvider");
             var services = new ServiceCollection();
-            services.AddNSCacheProvider();
+            services.AddNSCacheProvider("NS.Shared.CacheProvider.Tests");
             return services.BuildServiceProvider();
         }
 
