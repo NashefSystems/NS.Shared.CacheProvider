@@ -59,7 +59,7 @@ namespace NS.Shared.CacheProvider.Services
             var fullKey = GetFullKey(key);
             if (value == null)
             {
-                await DeleteAsync(fullKey);
+                await DeleteAsync(key);
                 return;
             }
 
@@ -68,6 +68,7 @@ namespace NS.Shared.CacheProvider.Services
             await _database.HashSetAsync(fullKey, HASH_CREATE_AT_KEY, createAt.ToString(), When.Always);
             await _database.HashSetAsync(fullKey, HASH_MACHINE_NAME_KEY, Environment.MachineName, When.Always);
             await _database.HashSetAsync(fullKey, HASH_DATA_KEY, json, When.Always);
+            await _database.HashDeleteAsync(fullKey, HASH_EXPIRY_AT_KEY);
             if (expiryTime != null)
             {
                 await _database.HashSetAsync(fullKey, HASH_EXPIRY_AT_KEY, createAt.Add(expiryTime.Value).ToString(), When.Always);
@@ -81,6 +82,7 @@ namespace NS.Shared.CacheProvider.Services
             await _database.HashDeleteAsync(fullKey, HASH_DATA_KEY);
             await _database.HashDeleteAsync(fullKey, HASH_MACHINE_NAME_KEY);
             await _database.HashDeleteAsync(fullKey, HASH_CREATE_AT_KEY);
+            await _database.HashDeleteAsync(fullKey, HASH_EXPIRY_AT_KEY);
         }
     }
 }

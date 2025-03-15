@@ -11,13 +11,11 @@
 		<PackageIcon>icon.png</PackageIcon>
 		<RepositoryUrl>https://github.com/NashefSystems/NS.Shared.CacheProvider</RepositoryUrl>
 		<PackageProjectUrl>https://github.com/NashefSystems/NS.Shared.CacheProvider</PackageProjectUrl>
+		<ApplicationIcon>icon.ico</ApplicationIcon>
 	</PropertyGroup>
 
 	<ItemGroup>
-	  <None Include="..\icon.png">
-	    <Pack>True</Pack>
-	    <PackagePath>\</PackagePath>
-	  </None>
+	  <Content Include="icon.ico" />
 	</ItemGroup>
 
 	<ItemGroup>
