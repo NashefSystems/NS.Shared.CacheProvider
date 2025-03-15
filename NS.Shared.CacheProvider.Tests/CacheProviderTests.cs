@@ -90,5 +90,22 @@ namespace NS.Shared.CacheProvider.Tests
             var res = await _cacheProvider.GetAsync<int>($"{KEY_PREFIX}:default_value", defaultValue);
             Assert.That(res, Is.EqualTo(defaultValue));
         }
+
+        [Test]
+        public async Task DeleteValueTest()
+        {
+            var key = "K_" + Guid.NewGuid().ToString("N");
+            Console.WriteLine($"Key: '{key}'");
+            var res = await _cacheProvider.GetAsync<string>(key);
+            Assert.That(res, Is.Null);
+
+            await _cacheProvider.SetOrUpdateAsync(key, "HI");
+            res = await _cacheProvider.GetAsync<string>(key);
+            Assert.That(res, Is.EqualTo("HI"));
+
+            await _cacheProvider.DeleteAsync(key);
+            res = await _cacheProvider.GetAsync<string>(key);
+            Assert.That(res, Is.Null);
+        }
     }
 }
