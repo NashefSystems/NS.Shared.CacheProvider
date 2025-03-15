@@ -48,6 +48,7 @@ jobs:
         uses: NashefSystems/NS.DevOps.Files/.github/workflows/Nuget_CI-CD.yml@master
         with:
           BRANCH: "develop"
+          DOTNET_VERSION: "9.0.x"
         secrets: inherit
         
     BuildTestAndPublish_master:
@@ -59,4 +60,5 @@ jobs:
         uses: NashefSystems/NS.DevOps.Files/.github/workflows/Nuget_CI-CD.yml@master
         with:
           BRANCH: "master"
+          DOTNET_VERSION: "9.0.x"
         secrets: inherit
