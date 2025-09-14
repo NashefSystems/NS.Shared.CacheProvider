@@ -64,7 +64,12 @@ namespace NS.Shared.CacheProvider.Services
             }
 
             var createAt = DateTimeOffset.Now;
-            var json = JsonConvert.SerializeObject(value, Formatting.Indented);
+            var json = JsonConvert.SerializeObject(value, new JsonSerializerSettings
+            {
+                ReferenceLoopHandling = ReferenceLoopHandling.Serialize,
+                PreserveReferencesHandling = PreserveReferencesHandling.Objects,
+                Formatting = Formatting.Indented,
+            });
             await _database.HashSetAsync(fullKey, HASH_CREATE_AT_KEY, createAt.ToString(), When.Always);
             await _database.HashSetAsync(fullKey, HASH_MACHINE_NAME_KEY, Environment.MachineName, When.Always);
             await _database.HashSetAsync(fullKey, HASH_DATA_KEY, json, When.Always);
