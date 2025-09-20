@@ -1,7 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using NS.Shared.CacheProvider.Extensions;
 using NS.Shared.CacheProvider.Interfaces;
-using System;
 using System.Reflection;
 
 namespace NS.Shared.CacheProvider.Tests
@@ -47,18 +46,25 @@ namespace NS.Shared.CacheProvider.Tests
 
         private static async Task AddRunInfoCache()
         {
-            var projectName = Assembly.GetExecutingAssembly().GetName().Name;
-            var finishAt = DateTimeOffset.Now;
-            var runInfo = new
+            try
             {
-                RunId = _runId,
-                StartAt = _startAt,
-                FinishAt = finishAt,
-                Duration = finishAt - _startAt,
-            };
-            var cache = ServiceProvider.GetRequiredService<INSCacheProvider>();
-            var key = $"Tests:Runs:{projectName}:{_startAt:yyyy-MM-dd}:{_runId}";
-            await cache.SetOrUpdateAsync(key, runInfo);
+                var projectName = Assembly.GetExecutingAssembly().GetName().Name;
+                var finishAt = DateTimeOffset.Now;
+                var runInfo = new
+                {
+                    RunId = _runId,
+                    StartAt = _startAt,
+                    FinishAt = finishAt,
+                    Duration = finishAt - _startAt,
+                };
+                var cache = ServiceProvider.GetRequiredService<INSCacheProvider>();
+                var key = $"Tests:Runs:{projectName}:{_startAt:yyyy-MM-dd}:{_runId}";
+                await cache.SetOrUpdateAsync(key, runInfo);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"AddRunInfoCache error: {ex.Message}");
+            }
         }
     }
 }
