@@ -9,14 +9,14 @@ namespace NS.Shared.CacheProvider.Services
     {
         private readonly IConnectionMultiplexer _redis;
         private readonly IDatabase _database;
-        private readonly CacheConfigs _cacheConfigs;
+        private readonly NSCacheProviderConfigs _cacheConfigs;
 
         private const string HASH_CREATE_AT_KEY = "CreateAt";
         private const string HASH_EXPIRY_AT_KEY = "ExpiryAt";
         private const string HASH_MACHINE_NAME_KEY = "MachineName";
         private const string HASH_DATA_KEY = "Data";
 
-        public NSCacheProvider(IConnectionMultiplexer connectionMultiplexer, CacheConfigs cacheConfigs)
+        public NSCacheProvider(IConnectionMultiplexer connectionMultiplexer, NSCacheProviderConfigs cacheConfigs)
         {
             _redis = connectionMultiplexer;
             _cacheConfigs = cacheConfigs;
@@ -34,11 +34,11 @@ namespace NS.Shared.CacheProvider.Services
 
         public Task<List<string>> GetKeysAsync()
         {
-            var server = _redis.GetServer(Consts.REDIS_HOST, Consts.REDIS_PORT);
+            var server = _redis.GetServer($"{_cacheConfigs.Host}:{_cacheConfigs.Port}");
             var res = server?
                 .Keys(database: _database.Database)
                 .Select(x => x.ToString())
-                .Where(x => x.StartsWith(_cacheConfigs?.CachePrefix ?? ""))
+                .Where(x => x.StartsWith(_cacheConfigs.CachePrefix ))
                 .ToList();
             return Task.FromResult(res ?? []);
         }

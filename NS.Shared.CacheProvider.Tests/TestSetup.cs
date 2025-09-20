@@ -24,7 +24,15 @@ namespace NS.Shared.CacheProvider.Tests
         {
             Console.WriteLine("> GetServiceProvider");
             var services = new ServiceCollection();
-            services.AddNSCacheProvider("NS.Shared.CacheProvider.Tests");
+
+            services.AddNSCacheProvider(new models.NSCacheProviderConfigs()
+            {
+                Host = "190.168.1.177",
+                Port = 6379,
+                UserName = "NS_Shared_CacheProvider",
+                Password = "wZKOdLjkCLxp5Lt$AqKzlztefbGXUELN",
+                CachePrefix = "NS.Shared.CacheProvider.Tests"
+            });
             return services.BuildServiceProvider();
         }
 
