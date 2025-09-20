@@ -10,6 +10,16 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+	  <Compile Remove="CacheProviderTests.cs" />
+	  <Compile Remove="TestSetup.cs" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <None Include="CacheProviderTests.cs" />
+	  <None Include="TestSetup.cs" />
+	</ItemGroup>
+
+	<ItemGroup>
 		<PackageReference Include="coverlet.collector" Version="6.0.4">
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>

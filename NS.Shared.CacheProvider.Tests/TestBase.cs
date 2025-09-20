@@ -6,7 +6,7 @@ namespace NS.Shared.CacheProvider.Tests
     [TestFixture]
     public abstract class TestBase
     {
-        protected static ServiceProvider? ServiceProvider => TestSetup.ServiceProvider;
+        //protected static ServiceProvider? ServiceProvider => TestSetup.ServiceProvider;
 
         [SetUp]
         public void TestSetupMethod()
