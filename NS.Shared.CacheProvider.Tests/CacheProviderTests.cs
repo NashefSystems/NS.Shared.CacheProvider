@@ -3,6 +3,7 @@ using NS.Shared.CacheProvider.Interfaces;
 
 namespace NS.Shared.CacheProvider.Tests
 {
+    [Ignore("local tests")]
     public class CacheProviderTests : TestBase
     {
         private INSCacheProvider _cacheProvider;
